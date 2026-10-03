@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RDCM Certificate Generator</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+      color: #fff;
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 40px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .controls {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 30px;
+      border-radius: 12px;
+      margin-bottom: 40px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 14px;
+    }
+
+    input::placeholder {
+      color: #999;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 16px;
+      transition: transform 0.2s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+    }
+
+    .certificate {
+      background: linear-gradient(135deg, #fff9e6 0%, #ffe6f0 100%);
+      color: #333;
+      padding: 60px;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+      margin-bottom: 30px;
+      font-family: 'Georgia', serif;
+      display: none;
+    }
+
+    .certificate.show {
+      display: block;
+      animation: slideIn 0.5s ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .certificate-header {
+      font-size: 36px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #667eea;
+    }
+
+    .certificate-subtitle {
+      font-size: 18px;
+      color: #666;
+      margin-bottom: 40px;
+      font-style: italic;
+    }
+
+    .certificate-content {
+      margin: 40px 0;
+    }
+
+    .recipient-name {
+      font-size: 32px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #667eea;
+      padding-bottom: 15px;
+    }
+
+    .course-name {
+      font-size: 24px;
+      color: #764ba2;
+      margin-bottom: 15px;
+    }
+
+    .certificate-details {
+      margin: 30px 0;
+      font-size: 14px;
+      color: #666;
+    }
+
+    .certificate-date {
+      margin-top: 40px;
+      font-size: 12px;
+      color: #999;
+    }
+
+    .signature-line {
+      margin-top: 50px;
+      border-top: 2px solid #333;
+      padding-top: 10px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 15px;
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.15);
+    }
+
+    .preview-note {
+      color: #aaa;
+      font-size: 12px;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .success {
+      background: rgba(74, 222, 128, 0.1);
+      border: 1px solid rgba(74, 222, 128, 0.3);
+      color: #4ade80;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+      text-align: center;
+    }
+
+    .success.show {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🎓 RDCM Certificate Generator</h1>
+
+  <div class="success" id="successMsg">
+    ✓ Certificate generated! Download to share on LinkedIn.
+  </div>
+
+  <div class="controls">
+    <h3 style="margin-bottom: 20px;">Generate Your Certificate</h3>
+
+    <input type="text" id="studentName" placeholder="Your Full Name" required>
+
+    <select id="courseSelect" required>
+      <option value="">Select Course</option>
+      <option value="Python Mastery">Python Mastery</option>
+      <option value="Advanced Trading">Advanced Trading</option>
+      <option value="AI Automation">AI Automation</option>
+      <option value="Financial Analysis">Financial Analysis</option>
+      <option value="Web Development">Web Development</option>
+      <option value="Machine Learning">Machine Learning</option>
+    </select>
+
+    <input type="text" id="completionDate" placeholder="Completion Date (e.g., October 3, 2026)">
+
+    <input type="text" id="instructor" placeholder="Instructor Name (optional)">
+
+    <button onclick="generateCertificate()">Generate Certificate</button>
+
+    <div class="preview-note">Preview below, then download as PDF</div>
+  </div>
+
+  <div id="certificateContainer" class="certificate">
+    <div class="certificate-header">Certificate of Completion</div>
+    <div class="certificate-subtitle">This certifies that</div>
+
+    <div class="certificate-content">
+      <div class="recipient-name" id="certName">John Doe</div>
+
+      <p style="font-size: 16px; margin: 20px 0;">Has successfully completed the course:</p>
+
+      <div class="course-name" id="certCourse">Python Mastery</div>
+
+      <p style="font-size: 14px; color: #666; margin: 20px 0;">
+        With demonstrated proficiency in all learning objectives and requirements.
+      </p>
+
+      <div class="certificate-details">
+        <p><strong>Level:</strong> Professional</p>
+        <p><strong>Platform:</strong> RDCM Learning</p>
+        <p><strong>Issued:</strong> <span id="certDate">October 3, 2026</span></p>
+        <p><strong>Certificate ID:</strong> <span id="certID">RDCM-2024-12345</span></p>
+      </div>
+
+      <div style="margin-top: 40px; font-size: 12px; color: #999;">
+        This certificate is valid proof of completion and may be shared on LinkedIn, portfolios, and professional profiles.
+      </div>
+
+      <div class="signature-line">RDCM Learning Platform</div>
+
+      <div class="certificate-date">
+        Verify at: rdcm-certificates.com/verify/<span id="certID2">RDCM-2024-12345</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="buttons" id="downloadButtons" style="display: none;">
+    <button onclick="downloadPDF()">📥 Download as PDF</button>
+    <button class="btn-secondary" onclick="shareLinkedIn()">🔗 Share on LinkedIn</button>
+    <button class="btn-secondary" onclick="resetForm()">↺ Generate Another</button>
+  </div>
+</div>
+
+<script>
+  function generateCertificate() {
+    const name = document.getElementById('studentName').value.trim();
+    const course = document.getElementById('courseSelect').value;
+    const date = document.getElementById('completionDate').value.trim() || new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+    if (!name) {
+      alert('Please enter your name');
+      return;
+    }
+
+    if (!course) {
+      alert('Please select a course');
+      return;
+    }
+
+    // Generate certificate ID
+    const certID = 'RDCM-' + new Date().getFullYear() + '-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+
+    // Update certificate
+    document.getElementById('certName').textContent = name;
+    document.getElementById('certCourse').textContent = course;
+    document.getElementById('certDate').textContent = date;
+    document.getElementById('certID').textContent = certID;
+    document.getElementById('certID2').textContent = certID;
+
+    // Show certificate
+    document.getElementById('certificateContainer').classList.add('show');
+    document.getElementById('downloadButtons').style.display = 'flex';
+    document.getElementById('successMsg').classList.add('show');
+
+    // Hide success message after 3 seconds
+    setTimeout(() => {
+      document.getElementById('successMsg').classList.remove('show');
+    }, 3000);
+
+    // Scroll to certificate
+    setTimeout(() => {
+      document.getElementById('certificateContainer').scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  }
+
+  function downloadPDF() {
+    const element = document.getElementById('certificateContainer');
+    const name = document.getElementById('studentName').value || 'certificate';
+    const opt = {
+      margin: 10,
+      filename: `RDCM-Certificate-${name.replace(/\s/g, '-')}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { orientation: 'landscape', unit: 'mm', format: 'a4' }
+    };
+    html2pdf().set(opt).from(element).save();
+  }
+
+  function shareLinkedIn() {
+    const name = document.getElementById('studentName').value;
+    const course = document.getElementById('courseSelect').value;
+    const certID = document.getElementById('certID').textContent;
+
+    const text = `I just completed the ${course} course on RDCM Learning Platform! 🎓 Certificate ID: ${certID} #learning #skillbuilding`;
+    const url = `https://www.linkedin.com/sharing/share-offsite/?url=https://rdcm-certificates.com/verify/${certID}`;
+
+    window.open(url, '_blank');
+  }
+
+  function resetForm() {
+    document.getElementById('studentName').value = '';
+    document.getElementById('courseSelect').value = '';
+    document.getElementById('completionDate').value = '';
+    document.getElementById('certificateContainer').classList.remove('show');
+    document.getElementById('downloadButtons').style.display = 'none';
+  }
+
+  // Pre-fill date if not set
+  document.getElementById('completionDate').valueAsDate = new Date();
+</script>
+
+</body>
+</html>

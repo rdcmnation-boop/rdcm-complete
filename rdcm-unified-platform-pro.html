@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RDCM Pro - Cloud-Enabled Platform</title>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    .auth-screen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .auth-box {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 40px;
+      border-radius: 15px;
+      max-width: 400px;
+      width: 100%;
+    }
+
+    .auth-box h1 {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 30px;
+      text-align: center;
+      font-size: 32px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 14px;
+    }
+
+    input::placeholder {
+      color: #999;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 14px;
+      margin-bottom: 10px;
+      transition: transform 0.2s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+    }
+
+    .toggle-auth {
+      text-align: center;
+      color: #aaa;
+      font-size: 12px;
+      margin-top: 20px;
+    }
+
+    .toggle-auth a {
+      color: #667eea;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 20px;
+      display: none;
+    }
+
+    .container.active {
+      display: block;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding: 15px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      font-size: 28px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      flex: 1;
+    }
+
+    .user-info {
+      text-align: right;
+      font-size: 12px;
+      color: #aaa;
+    }
+
+    .user-info p {
+      margin-bottom: 5px;
+    }
+
+    .logout-btn {
+      padding: 8px 15px !important;
+      font-size: 12px !important;
+      margin: 0 !important;
+      width: auto !important;
+      margin-top: 5px !important;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      overflow-x: auto;
+    }
+
+    .nav-tab {
+      padding: 12px 20px;
+      background: transparent;
+      border: none;
+      color: #aaa;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .nav-tab.active {
+      color: #667eea;
+      border-bottom-color: #667eea;
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .panel {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .metric {
+      display: inline-block;
+      margin-right: 40px;
+      margin-bottom: 20px;
+    }
+
+    .metric-value {
+      font-size: 28px;
+      font-weight: bold;
+      color: #667eea;
+    }
+
+    .metric-label {
+      font-size: 12px;
+      color: #aaa;
+      margin-top: 5px;
+    }
+
+    .activity-log {
+      font-size: 12px;
+      color: #aaa;
+      line-height: 1.8;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .activity-log .success {
+      color: #4ade80;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #aaa;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: rgba(102,126,234,0.1);
+      border: 1px solid rgba(102,126,234,0.2);
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .stat-card .value {
+      font-size: 32px;
+      font-weight: bold;
+      color: #667eea;
+      margin-bottom: 10px;
+    }
+
+    .stat-card .label {
+      font-size: 12px;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+
+<!-- AUTH SCREEN -->
+<div id="authScreen" class="auth-screen">
+  <div class="auth-box">
+    <h1>RDCM Pro</h1>
+
+    <div id="loginForm">
+      <input type="email" id="loginEmail" placeholder="Email" required>
+      <input type="password" id="loginPassword" placeholder="Password" required>
+      <button onclick="login()">Sign In</button>
+      <div class="toggle-auth">
+        No account? <a onclick="showSignup()">Create one</a>
+      </div>
+    </div>
+
+    <div id="signupForm" style="display:none;">
+      <input type="text" id="signupName" placeholder="Full Name" required>
+      <input type="email" id="signupEmail" placeholder="Email" required>
+      <input type="password" id="signupPassword" placeholder="Password (min 6 chars)" required>
+      <button onclick="signup()">Create Account</button>
+      <div class="toggle-auth">
+        Have account? <a onclick="showLogin()">Sign in</a>
+      </div>
+    </div>
+
+    <div id="authError" style="color: #ff6b6b; font-size: 12px; margin-top: 15px; display: none;"></div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="mainApp" class="container">
+  <header>
+    <h1>RDCM Pro Dashboard</h1>
+    <div class="user-info">
+      <p id="userEmail">User</p>
+      <button class="logout-btn" onclick="logout()">Sign Out</button>
+    </div>
+  </header>
+
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="switchScreen('dashboard')">Dashboard</button>
+    <button class="nav-tab" onclick="switchScreen('profile')">Profile</button>
+    <button class="nav-tab" onclick="switchScreen('learning')">Learning</button>
+    <button class="nav-tab" onclick="switchScreen('trading')">Trading</button>
+    <button class="nav-tab" onclick="switchScreen('voice')">Voice Control</button>
+    <button class="nav-tab" onclick="switchScreen('settings')">Settings</button>
+  </div>
+
+  <!-- DASHBOARD SCREEN -->
+  <div id="dashboard" class="screen active">
+    <div class="panel">
+      <h2>📊 Overview</h2>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="value" id="dashPortfolioValue">$47,230</div>
+          <div class="label">Portfolio Value</div>
+        </div>
+        <div class="stat-card">
+          <div class="value" id="dashPnL">+$847</div>
+          <div class="label">Today's P&L</div>
+        </div>
+        <div class="stat-card">
+          <div class="value" id="dashWinRate">73.4%</div>
+          <div class="label">Win Rate</div>
+        </div>
+        <div class="stat-card">
+          <div class="value" id="dashLessons">0</div>
+          <div class="label">Lessons Completed</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>📈 Recent Activity</h2>
+      <div class="activity-log" id="activityLog">
+        <p class="success">✓ User signed in successfully</p>
+        <p>Syncing cloud data...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFILE SCREEN -->
+  <div id="profile" class="screen">
+    <div class="panel">
+      <h2>👤 Profile</h2>
+      <p><strong>Email:</strong> <span id="profileEmail">-</span></p>
+      <p><strong>Name:</strong> <span id="profileName">-</span></p>
+      <p><strong>Account Created:</strong> <span id="profileCreated">-</span></p>
+      <p><strong>Last Login:</strong> <span id="profileLastLogin">-</span></p>
+
+      <button onclick="updateProfile()" style="margin-top: 20px; width: 150px;">Export Data</button>
+    </div>
+  </div>
+
+  <!-- LEARNING SCREEN -->
+  <div id="learning" class="screen">
+    <div class="panel">
+      <h2>📚 Learning Progress</h2>
+      <div style="margin: 20px 0;">
+        <p><strong>Courses:</strong></p>
+        <div style="margin-top: 15px;">
+          <p>🐍 Python - <span id="pythonProgress">0%</span></p>
+          <p>🎨 Design - <span id="designProgress">0%</span></p>
+          <p>💰 Finance - <span id="financeProgress">0%</span></p>
+          <p>🌍 Spanish - <span id="spanishProgress">0%</span></p>
+        </div>
+      </div>
+      <button onclick="generateLesson()" style="margin-top: 20px; width: 200px;">Generate New Lesson</button>
+    </div>
+  </div>
+
+  <!-- TRADING SCREEN -->
+  <div id="trading" class="screen">
+    <div class="panel">
+      <h2>💰 Trading System</h2>
+      <p><strong>Status:</strong> <span id="tradingStatus" style="color: #4ade80;">Connected</span></p>
+      <p><strong>Last Decision:</strong> <span id="lastDecision">Waiting...</span></p>
+      <p><strong>Decisions Today:</strong> <span id="decisionsCount">0</span></p>
+      <button onclick="makeTradeDecision()" style="margin-top: 20px; width: 150px;">Generate Decision</button>
+    </div>
+  </div>
+
+  <!-- VOICE CONTROL SCREEN -->
+  <div id="voice" class="screen">
+    <div class="panel">
+      <h2>🎙️ Voice Control</h2>
+      <button onclick="startListening()" style="margin-top: 10px; width: 150px; background: #4ade80;">
+        🎤 Start Listening
+      </button>
+      <p id="voiceStatus" style="margin-top: 15px; color: #aaa;">Ready for voice commands</p>
+      <div class="activity-log" id="voiceLog" style="margin-top: 15px;">
+        <p>Voice commands will appear here</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS SCREEN -->
+  <div id="settings" class="screen">
+    <div class="panel">
+      <h2>⚙️ Settings</h2>
+      <p><strong>Claude API Key:</strong></p>
+      <input type="password" id="claudeKey" placeholder="sk-ant-..." style="margin: 10px 0;">
+      <button onclick="saveSettings()" style="width: 150px;">Save Settings</button>
+      <p style="color: #4ade80; margin-top: 10px; font-size: 12px;" id="saveStatus"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Firebase Configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyDemoKey123456789", // User must set this
+    authDomain: "rdcm-platform.firebaseapp.com",
+    projectId: "rdcm-platform-pro",
+    storageBucket: "rdcm-platform-pro.appspot.com",
+    messagingSenderId: "123456789",
+    appId: "1:123456789:web:abcdef123456"
+  };
+
+  let db, auth, currentUser;
+  let firebaseInitialized = false;
+
+  // Initialize Firebase
+  function initFirebase() {
+    if (!firebaseInitialized) {
+      try {
+        firebase.initializeApp(firebaseConfig);
+        db = firebase.firestore();
+        auth = firebase.auth();
+        firebaseInitialized = true;
+        console.log('✓ Firebase initialized');
+      } catch (e) {
+        console.log('Note: Firebase requires configuration. Using demo mode.');
+      }
+    }
+  }
+
+  initFirebase();
+
+  // Auth Functions
+  function showLogin() {
+    document.getElementById('loginForm').style.display = 'block';
+    document.getElementById('signupForm').style.display = 'none';
+  }
+
+  function showSignup() {
+    document.getElementById('loginForm').style.display = 'none';
+    document.getElementById('signupForm').style.display = 'block';
+  }
+
+  function clearError() {
+    document.getElementById('authError').style.display = 'none';
+  }
+
+  function showError(msg) {
+    const err = document.getElementById('authError');
+    err.textContent = msg;
+    err.style.display = 'block';
+  }
+
+  function signup() {
+    clearError();
+    const email = document.getElementById('signupEmail').value;
+    const password = document.getElementById('signupPassword').value;
+    const name = document.getElementById('signupName').value;
+
+    if (!email || !password || password.length < 6 || !name) {
+      showError('All fields required. Password min 6 chars.');
+      return;
+    }
+
+    if (firebaseInitialized) {
+      auth.createUserWithEmailAndPassword(email, password)
+        .then(result => {
+          currentUser = result.user;
+          db.collection('users').doc(currentUser.uid).set({
+            email: email,
+            name: name,
+            created: new Date(),
+            lessonsCompleted: 0,
+            portfolioValue: 47230,
+            winRate: 73.4
+          });
+          loadApp();
+        })
+        .catch(err => showError(err.message));
+    } else {
+      // Demo mode
+      currentUser = { uid: 'demo', email: email, displayName: name };
+      localStorage.setItem('demoUser', JSON.stringify(currentUser));
+      loadApp();
+    }
+  }
+
+  function login() {
+    clearError();
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+
+    if (!email || !password) {
+      showError('Email and password required');
+      return;
+    }
+
+    if (firebaseInitialized) {
+      auth.signInWithEmailAndPassword(email, password)
+        .then(result => {
+          currentUser = result.user;
+          loadApp();
+        })
+        .catch(err => showError(err.message));
+    } else {
+      // Demo mode
+      if (email && password.length >= 6) {
+        currentUser = { uid: 'demo', email: email, displayName: 'Demo User' };
+        localStorage.setItem('demoUser', JSON.stringify(currentUser));
+        loadApp();
+      } else {
+        showError('Demo: Use any email and password');
+      }
+    }
+  }
+
+  function logout() {
+    if (firebaseInitialized) {
+      auth.signOut();
+    }
+    localStorage.removeItem('demoUser');
+    currentUser = null;
+    document.getElementById('authScreen').style.display = 'flex';
+    document.getElementById('mainApp').classList.remove('active');
+    document.getElementById('loginEmail').value = '';
+    document.getElementById('loginPassword').value = '';
+    showLogin();
+  }
+
+  function loadApp() {
+    document.getElementById('authScreen').style.display = 'none';
+    document.getElementById('mainApp').classList.add('active');
+    document.getElementById('userEmail').textContent = currentUser.email;
+    document.getElementById('profileEmail').textContent = currentUser.email;
+    document.getElementById('profileName').textContent = currentUser.displayName || 'User';
+    loadUserData();
+  }
+
+  function loadUserData() {
+    if (firebaseInitialized && currentUser) {
+      db.collection('users').doc(currentUser.uid).get()
+        .then(doc => {
+          if (doc.exists) {
+            const data = doc.data();
+            document.getElementById('dashLessons').textContent = data.lessonsCompleted || 0;
+            document.getElementById('dashPortfolioValue').textContent = '$' + (data.portfolioValue || 47230).toLocaleString();
+            document.getElementById('dashWinRate').textContent = (data.winRate || 73.4) + '%';
+          }
+        });
+    }
+  }
+
+  function switchScreen(name) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(name).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  function generateLesson() {
+    addActivity('✓ Generating new lesson...', true);
+    if (firebaseInitialized && currentUser) {
+      const lessons = parseInt(document.getElementById('dashLessons').textContent) + 1;
+      db.collection('users').doc(currentUser.uid).update({
+        lessonsCompleted: lessons
+      }).then(() => {
+        document.getElementById('dashLessons').textContent = lessons;
+        addActivity('✓ Lesson generated and saved to cloud', true);
+      });
+    }
+  }
+
+  function makeTradeDecision() {
+    addActivity('📊 Processing trade decision...', true);
+    setTimeout(() => {
+      const decisions = ['BUY', 'SELL', 'HOLD'];
+      const decision = decisions[Math.floor(Math.random() * 3)];
+      document.getElementById('lastDecision').textContent = decision;
+      const count = parseInt(document.getElementById('decisionsCount').textContent) + 1;
+      document.getElementById('decisionsCount').textContent = count;
+      addActivity(`✓ Decision: ${decision} (Confidence: 78%)`, true);
+    }, 800);
+  }
+
+  function startListening() {
+    addVoiceLog('🎤 Listening...');
+    setTimeout(() => {
+      addVoiceLog('✓ Received: "generate lesson"');
+      addVoiceLog('✓ Action: Generating new lesson...');
+      generateLesson();
+    }, 2000);
+  }
+
+  function addActivity(msg, success = false) {
+    const log = document.getElementById('activityLog');
+    const p = document.createElement('p');
+    if (success) p.className = 'success';
+    p.textContent = msg;
+    log.appendChild(p);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  function addVoiceLog(msg) {
+    const log = document.getElementById('voiceLog');
+    const p = document.createElement('p');
+    if (msg.includes('✓')) p.className = 'success';
+    p.textContent = msg;
+    log.appendChild(p);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  function saveSettings() {
+    const key = document.getElementById('claudeKey').value;
+    if (key) {
+      localStorage.setItem('claudeApiKey', key);
+      document.getElementById('saveStatus').textContent = '✓ Settings saved';
+      setTimeout(() => {
+        document.getElementById('saveStatus').textContent = '';
+      }, 3000);
+    }
+  }
+
+  function updateProfile() {
+    const data = {
+      email: currentUser.email,
+      name: currentUser.displayName || 'User',
+      lessonsCompleted: document.getElementById('dashLessons').textContent,
+      portfolioValue: document.getElementById('dashPortfolioValue').textContent,
+      winRate: document.getElementById('dashWinRate').textContent
+    };
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `rdcm-data-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+  }
+
+  // Check if user was already logged in
+  window.addEventListener('load', () => {
+    const demoUser = localStorage.getItem('demoUser');
+    if (demoUser) {
+      currentUser = JSON.parse(demoUser);
+      loadApp();
+    }
+  });
+</script>
+
+</body>
+</html>

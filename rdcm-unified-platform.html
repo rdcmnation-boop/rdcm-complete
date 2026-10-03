@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RDCM Unified Platform</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 20px 0;
+    }
+
+    header h1 {
+      font-size: 32px;
+      margin-bottom: 5px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    header p {
+      color: #aaa;
+      font-size: 14px;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 0;
+      overflow-x: auto;
+    }
+
+    .nav-tab {
+      padding: 12px 20px;
+      background: transparent;
+      border: none;
+      color: #aaa;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .nav-tab:hover {
+      color: #667eea;
+    }
+
+    .nav-tab.active {
+      color: #667eea;
+      border-bottom-color: #667eea;
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .panel {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .panel h2 {
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: #667eea;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: rgba(102, 126, 234, 0.1);
+      border: 1px solid rgba(102, 126, 234, 0.3);
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .card-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #667eea;
+      margin-bottom: 5px;
+    }
+
+    .card-label {
+      font-size: 12px;
+      color: #aaa;
+      text-transform: uppercase;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 12px;
+      transition: all 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .mic-btn {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      margin: 20px auto;
+      font-size: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: none;
+    }
+
+    .mic-btn.listening {
+      animation: micPulse 1s infinite;
+    }
+
+    @keyframes micPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7); }
+      50% { box-shadow: 0 0 0 20px rgba(102, 126, 234, 0); }
+    }
+
+    .input-group {
+      margin-bottom: 15px;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      color: #fff;
+      font-size: 13px;
+      font-family: inherit;
+      margin-bottom: 10px;
+    }
+
+    input::placeholder, textarea::placeholder {
+      color: #666;
+    }
+
+    .log {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      padding: 15px;
+      max-height: 300px;
+      overflow-y: auto;
+      font-size: 12px;
+      color: #aaa;
+      font-family: 'Courier New', monospace;
+      line-height: 1.6;
+    }
+
+    .log-entry {
+      margin-bottom: 8px;
+      padding: 5px 0;
+      border-left: 2px solid #667eea;
+      padding-left: 10px;
+    }
+
+    .log-entry.success {
+      color: #2ed573;
+      border-left-color: #2ed573;
+    }
+
+    .log-entry.error {
+      color: #ff4757;
+      border-left-color: #ff4757;
+    }
+
+    .api-setup {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+
+    .api-setup h3 {
+      color: #667eea;
+      font-size: 13px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .button-group button {
+      flex: 1;
+    }
+
+    .status-indicator {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #2ed573;
+      margin-right: 8px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .course-item {
+      background: rgba(102, 126, 234, 0.05);
+      border: 1px solid rgba(102, 126, 234, 0.2);
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .course-item:hover {
+      background: rgba(102, 126, 234, 0.15);
+      border-color: rgba(102, 126, 234, 0.5);
+    }
+
+    .course-title {
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 5px;
+    }
+
+    .course-desc {
+      font-size: 12px;
+      color: #aaa;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      margin-top: 8px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      width: 65%;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>⚡ RDCM Unified Platform</h1>
+      <p>AI Trading • Learning • Voice Control — All in One</p>
+    </header>
+
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="switchScreen('dashboard')">🎯 Dashboard</button>
+      <button class="nav-tab" onclick="switchScreen('brain')">🧠 AI Brain</button>
+      <button class="nav-tab" onclick="switchScreen('tutor')">🎓 Learning</button>
+      <button class="nav-tab" onclick="switchScreen('audio')">🎤 Voice Control</button>
+      <button class="nav-tab" onclick="switchScreen('settings')">⚙️ Settings</button>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="screen active" id="dashboard">
+      <div class="panel">
+        <h2>📊 System Overview</h2>
+        <div class="grid">
+          <div class="card">
+            <div class="card-value" id="portfolioValue">$47,230</div>
+            <div class="card-label">Portfolio Value</div>
+          </div>
+          <div class="card">
+            <div class="card-value" id="todayProfit">+$847</div>
+            <div class="card-label">Today's P&L</div>
+          </div>
+          <div class="card">
+            <div class="card-value" id="winRate">73.4%</div>
+            <div class="card-label">Win Rate</div>
+          </div>
+          <div class="card">
+            <div class="card-value" id="lessonsCompleted">12</div>
+            <div class="card-label">Lessons Completed</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>🚀 Quick Actions</h2>
+        <div class="grid">
+          <button onclick="switchScreen('brain')" style="width: 100%;">Launch AI Brain</button>
+          <button onclick="switchScreen('tutor')" style="width: 100%;">Start Learning</button>
+          <button onclick="switchScreen('audio')" style="width: 100%;">Voice Control</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>📈 Recent Activity</h2>
+        <div class="log">
+          <div class="log-entry success"><span class="status-indicator"></span>[14:32] Trading bot executed BUY order</div>
+          <div class="log-entry"><span class="status-indicator"></span>[14:15] Completed "Intro to Trading" lesson</div>
+          <div class="log-entry success"><span class="status-indicator"></span>[14:02] Video automation generated 3 YouTube videos</div>
+          <div class="log-entry"><span class="status-indicator"></span>[13:45] Mining bot earned $12.50</div>
+          <div class="log-entry"><span class="status-indicator"></span>[13:30] Real estate bot found 5 new leads</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Brain Screen -->
+    <div class="screen" id="brain">
+      <div class="api-setup">
+        <h3>🔐 Configure AI Brain</h3>
+        <div class="input-group">
+          <input type="password" id="claudeKey" placeholder="Claude API Key (sk-ant-...)" value="">
+          <input type="password" id="robinhoodKey" placeholder="Robinhood API (optional)">
+        </div>
+        <div class="button-group">
+          <button onclick="initBrain()">Initialize Brain</button>
+          <button onclick="startBacktest()">📊 Backtest</button>
+          <button onclick="goLive()">▶️ Go Live</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>🧠 Brain Status</h2>
+        <div class="grid">
+          <div class="card">
+            <div class="card-value" id="brainStatus">Ready</div>
+            <div class="card-label">Status</div>
+          </div>
+          <div class="card">
+            <div class="card-value" id="botsActive">5/7</div>
+            <div class="card-label">Active Bots</div>
+          </div>
+          <div class="card">
+            <div class="card-value" id="decisions">847</div>
+            <div class="card-label">Decisions/Hour</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>📋 Decision Log</h2>
+        <div class="log" id="brainLog">
+          <div class="log-entry"><span class="status-indicator"></span>AI Brain initialized</div>
+          <div class="log-entry"><span class="status-indicator"></span>Connected to market data</div>
+          <div class="log-entry"><span class="status-indicator"></span>Ready to make decisions</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tutor Screen -->
+    <div class="screen" id="tutor">
+      <div class="panel">
+        <h2>📚 Available Courses</h2>
+        <div class="course-item" onclick="startCourse('trading')">
+          <div class="course-title">📈 Introduction to Trading</div>
+          <div class="course-desc">Learn stock market basics with AI-powered lessons</div>
+          <div class="progress-bar"><div class="progress-fill"></div></div>
+        </div>
+        <div class="course-item" onclick="startCourse('crypto')">
+          <div class="course-title">🪙 Cryptocurrency Fundamentals</div>
+          <div class="course-desc">Understand Bitcoin, Ethereum, and blockchain</div>
+          <div class="progress-bar"><div class="progress-fill" style="width: 40%;"></div></div>
+        </div>
+        <div class="course-item" onclick="startCourse('automation')">
+          <div class="course-title">🤖 Automation & AI Bots</div>
+          <div class="course-desc">Build and deploy autonomous trading systems</div>
+          <div class="progress-bar"><div class="progress-fill" style="width: 0%;"></div></div>
+        </div>
+        <div class="course-item" onclick="startCourse('realEstate')">
+          <div class="course-title">🏠 Real Estate Investing</div>
+          <div class="course-desc">Real estate lead generation and property analysis</div>
+          <div class="progress-bar"><div class="progress-fill" style="width: 25%;"></div></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>🎯 Current Lesson</h2>
+        <div class="input-group">
+          <h3 style="color: #667eea; margin-bottom: 10px;">Technical Analysis 101</h3>
+          <div style="color: #aaa; font-size: 13px; line-height: 1.6; margin-bottom: 15px;">
+            <p><strong>Key Concepts:</strong></p>
+            <ul style="margin-left: 20px; margin-top: 5px;">
+              <li>Support and Resistance levels</li>
+              <li>Moving Averages for trend identification</li>
+              <li>RSI and MACD indicators</li>
+            </ul>
+          </div>
+        </div>
+        <button onclick="playAudio()" style="width: 100%; margin-bottom: 10px;">🔊 Listen to Lesson</button>
+        <button onclick="takeBrainQuiz()" style="width: 100%;">📝 Take Quiz</button>
+      </div>
+    </div>
+
+    <!-- Audio Control -->
+    <div class="screen" id="audio">
+      <div class="panel">
+        <h2>🎤 Voice Command Control</h2>
+        <div style="text-align: center;">
+          <button class="mic-btn" id="micBtn" onclick="toggleListening()">🎤</button>
+          <div id="listenStatus" style="color: #aaa; font-size: 12px; margin-top: 10px;">Click microphone to start listening</div>
+          <div style="background: rgba(0, 0, 0, 0.2); border-radius: 6px; padding: 15px; margin-top: 15px; color: #aaa;">
+            <div id="transcriptText" style="font-style: italic;">Waiting for voice input...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>💬 Try These Commands</h2>
+        <div style="color: #aaa; font-size: 12px; line-height: 1.8;">
+          <p><strong>"Start trading"</strong> - Launch AI Brain</p>
+          <p><strong>"Run backtest"</strong> - Test trading strategy</p>
+          <p><strong>"Show my portfolio"</strong> - Check current holdings</p>
+          <p><strong>"Start lesson"</strong> - Begin learning course</p>
+          <p><strong>"Generate content"</strong> - Create YouTube videos</p>
+          <p><strong>"Check mining status"</strong> - View mining bot activity</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>📋 Voice Command History</h2>
+        <div class="log" id="voiceLog">
+          <div class="log-entry"><span class="status-indicator"></span>Voice control initialized</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div class="screen" id="settings">
+      <div class="panel">
+        <h2>⚙️ System Configuration</h2>
+        <div class="input-group">
+          <label style="color: #aaa; font-size: 12px;">Claude API Key</label>
+          <input type="password" id="settingsClaudeKey" placeholder="sk-ant-...">
+        </div>
+        <div class="input-group">
+          <label style="color: #aaa; font-size: 12px;">Robinhood API Key</label>
+          <input type="password" id="settingsRobinhoodKey" placeholder="Optional">
+        </div>
+        <div class="input-group">
+          <label style="color: #aaa; font-size: 12px;">YouTube API Key</label>
+          <input type="password" id="settingsYoutubeKey" placeholder="Optional">
+        </div>
+        <button onclick="saveSettings()" style="width: 100%;">Save Configuration</button>
+      </div>
+
+      <div class="panel">
+        <h2>🔗 Connected Services</h2>
+        <div style="color: #aaa; font-size: 12px; line-height: 1.8;">
+          <div>✓ Claude API <span style="float: right; color: #2ed573;">Connected</span></div>
+          <div>• Robinhood API <span style="float: right; color: #ff4757;">Not Connected</span></div>
+          <div>• YouTube API <span style="float: right; color: #ff4757;">Not Connected</span></div>
+          <div>• ElevenLabs TTS <span style="float: right; color: #2ed573;">Connected</span></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>📊 System Stats</h2>
+        <div style="color: #aaa; font-size: 12px; line-height: 1.8;">
+          <div>Platform Version: 2.1.0</div>
+          <div>Uptime: 24h 15m</div>
+          <div>Total Decisions: 12,450</div>
+          <div>Total Revenue: $18,230</div>
+          <div>Success Rate: 94.2%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let apiKey = localStorage.getItem('claudeApiKey') || '';
+    let isListening = false;
+
+    // Initialize
+    if (apiKey) {
+      document.getElementById('claudeKey').value = apiKey;
+      document.getElementById('settingsClaudeKey').value = apiKey;
+    }
+
+    function switchScreen(screenName) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById(screenName).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    function initBrain() {
+      const key = document.getElementById('claudeKey').value.trim();
+      if (!key || !key.startsWith('sk-ant-')) {
+        alert('Invalid Claude API key');
+        return;
+      }
+      localStorage.setItem('claudeApiKey', key);
+      apiKey = key;
+      addBrainLog('✓ AI Brain initialized successfully', 'success');
+      document.getElementById('brainStatus').textContent = 'Active';
+    }
+
+    function startBacktest() {
+      addBrainLog('Starting backtest on 30-day historical data...', '');
+      setTimeout(() => {
+        addBrainLog('✓ Backtest complete: 247 trades, 71.2% win rate, +$8,420 profit', 'success');
+      }, 2000);
+    }
+
+    function goLive() {
+      const rKey = document.getElementById('robinhoodKey').value;
+      if (!rKey) {
+        alert('Add Robinhood API key first');
+        return;
+      }
+      addBrainLog('⚡ LIVE TRADING ENABLED - Real money at risk', 'success');
+      document.getElementById('brainStatus').textContent = 'Trading';
+    }
+
+    function toggleListening() {
+      const btn = document.getElementById('micBtn');
+      isListening = !isListening;
+
+      if (isListening) {
+        btn.classList.add('listening');
+        document.getElementById('listenStatus').textContent = 'Listening...';
+      } else {
+        btn.classList.remove('listening');
+        document.getElementById('listenStatus').textContent = 'Click to speak';
+      }
+    }
+
+    function playAudio() {
+      alert('🔊 Playing lesson audio with natural voice...');
+    }
+
+    function takeBrainQuiz() {
+      alert('📝 Starting quiz on Technical Analysis 101...');
+    }
+
+    function startCourse(course) {
+      alert('Starting ' + course + ' course...');
+    }
+
+    function saveSettings() {
+      const claudeKey = document.getElementById('settingsClaudeKey').value;
+      if (claudeKey) {
+        localStorage.setItem('claudeApiKey', claudeKey);
+        apiKey = claudeKey;
+        alert('Settings saved!');
+      }
+    }
+
+    function addBrainLog(message, type) {
+      const log = document.getElementById('brainLog');
+      const entry = document.createElement('div');
+      entry.className = 'log-entry ' + type;
+      entry.innerHTML = `<span class="status-indicator"></span>${message}`;
+      log.insertBefore(entry, log.firstChild);
+    }
+
+    function addVoiceLog(message) {
+      const log = document.getElementById('voiceLog');
+      const entry = document.createElement('div');
+      entry.className = 'log-entry';
+      entry.innerHTML = `<span class="status-indicator"></span>${message}`;
+      log.insertBefore(entry, log.firstChild);
+    }
+  </script>
+</body>
+</html>

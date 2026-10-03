@@ -1,0 +1,39 @@
+{
+  "name": "rdcm-unified-platform",
+  "version": "1.0.0",
+  "description": "AI-powered trading, tutoring, and voice automation platform",
+  "main": "index.html",
+  "scripts": {
+    "dev": "python -m http.server 8000",
+    "start": "python -m http.server 8000",
+    "deploy:vercel": "vercel --prod",
+    "deploy:netlify": "netlify deploy --prod",
+    "serve": "npx http-server"
+  },
+  "keywords": [
+    "AI",
+    "trading",
+    "tutoring",
+    "voice-automation",
+    "claude-api",
+    "education",
+    "fintech"
+  ],
+  "author": "RDCM",
+  "license": "MIT",
+  "devDependencies": {
+    "netlify-cli": "^17.0.0",
+    "vercel": "^33.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/rdcm-unified-platform"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/rdcm-unified-platform/issues"
+  },
+  "homepage": "https://rdcm-platform.vercel.app"
+}

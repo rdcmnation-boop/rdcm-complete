@@ -301,7 +301,7 @@
     <h1>🚀 RDCM</h1>
 
     <div id="loginForm">
-      <p style="margin-bottom: 20px; text-align: center; color: #aaa;">AI Trading • Learning • Voice Automation</p>
+      <p style="margin-bottom: 20px; text-align: center; color: #aaa;">AI Learning • Voice Automation</p>
       <input type="email" id="loginEmail" placeholder="Email" required>
       <input type="password" id="loginPassword" placeholder="Password" required>
       <button onclick="login()">Sign In</button>
@@ -337,7 +337,6 @@
   <div class="nav-tabs">
     <button class="nav-tab active" onclick="switchScreen('dashboard')">Dashboard</button>
     <button class="nav-tab" onclick="switchScreen('tutor')">📚 Tutor</button>
-    <button class="nav-tab" onclick="switchScreen('trading')">💰 Trading</button>
     <button class="nav-tab" onclick="switchScreen('voice')">🎙️ Voice</button>
     <button class="nav-tab" onclick="switchScreen('certificates')">🎓 Certificates</button>
     <button class="nav-tab" onclick="switchScreen('settings')">⚙️ Settings</button>
@@ -396,25 +395,6 @@
       <div id="lessonDisplay"></div>
 
       <div id="quizDisplay"></div>
-    </div>
-  </div>
-
-  <!-- TRADING -->
-  <div id="trading" class="screen">
-    <div class="panel">
-      <h2>💰 Trading System</h2>
-      <p><strong>Status:</strong> <span style="color: #4ade80;">Active</span></p>
-      <p><strong>Decisions Today:</strong> <span id="tradingCount">0</span></p>
-      <p><strong>Last Decision:</strong> <span id="lastTradeDecision">Pending...</span></p>
-
-      <button onclick="makeTradeDecision()" style="margin-top: 15px;">Generate Decision</button>
-
-      <div id="tradeLog" style="margin-top: 20px;">
-        <h3>Recent Trades:</h3>
-        <div class="activity-log" id="tradeActivity">
-          <p>No trades yet</p>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -609,24 +589,6 @@
   function updateTopicSelection() {
     document.getElementById('lessonDisplay').innerHTML = '';
     document.getElementById('quizDisplay').innerHTML = '';
-  }
-
-  // Trading
-  function makeTradeDecision() {
-    const decisions = ['BUY', 'SELL', 'HOLD'];
-    const decision = decisions[Math.floor(Math.random() * 3)];
-    const confidence = Math.floor(Math.random() * 30) + 65;
-
-    document.getElementById('lastTradeDecision').textContent = `${decision} (${confidence}% confidence)`;
-    updateMetric('tradingCount', parseInt(document.getElementById('tradingCount').textContent) + 1);
-
-    const log = document.getElementById('tradeActivity');
-    const item = document.createElement('p');
-    item.className = decision === 'BUY' ? 'success' : '';
-    item.textContent = `${new Date().toLocaleTimeString()} - ${decision} @ ${confidence}% confidence`;
-    log.insertBefore(item, log.firstChild);
-
-    addActivity(`📊 Trade decision: ${decision}`, true);
   }
 
   // Voice

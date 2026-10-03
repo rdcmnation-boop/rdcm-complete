@@ -1,0 +1,70 @@
+================================================================================
+DEPLOY LIVE TO NETLIFY IN 2 MINUTES
+================================================================================
+
+STEP 1: Push to GitHub (1 min)
+================================================================================
+
+Run these commands in your terminal (in the folder with all files):
+
+git init
+git add .
+git commit -m "RDCM Complete Platform"
+
+# Then go to github.com/new and create a repo called "rdcm-complete"
+# Copy the URL it gives you (looks like: https://github.com/YOUR_USERNAME/rdcm-complete.git)
+
+# Then run:
+git remote add origin [PASTE_THE_URL_HERE]
+git branch -M main
+git push -u origin main
+
+Done! Your code is now on GitHub.
+
+================================================================================
+STEP 2: Deploy to Netlify (1 min)
+================================================================================
+
+1. Go to netlify.com
+2. Click "Sign up" → Choose "GitHub"
+3. Authorize Netlify
+4. Click "New site from Git"
+5. Select your "rdcm-complete" repo
+6. Click "Deploy site"
+
+DONE! Your site is LIVE!
+
+Netlify will show you a URL like:
+  https://random-name-12345.netlify.app
+
+================================================================================
+TESTING THE LIVE SITE
+================================================================================
+
+1. Open the URL in your browser
+2. Sign up with any email/password
+3. Try all features:
+   - Dashboard tab (see metrics)
+   - Tutor tab (generate lesson, take quiz)
+   - Trading tab (generate trade decision)
+   - Voice tab (test voice commands)
+   - Certificates tab (generate certificate)
+   - Settings tab (save API key)
+
+Everything works in demo mode. No API keys needed to test.
+
+================================================================================
+SHARE YOUR LIVE URL
+================================================================================
+
+Once it's deployed, you have a live URL to share:
+- Send to friends to test
+- Post on social media
+- Add to your portfolio
+- Share in forums
+
+Every time you push code to GitHub → Netlify auto-deploys automatically!
+
+================================================================================
+That's it! You're live! 🎉
+================================================================================

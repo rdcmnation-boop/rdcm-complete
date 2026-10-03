@@ -1,0 +1,68 @@
+================================================================================
+RDCM UNIFIED PLATFORM - SIMPLE START GUIDE
+================================================================================
+
+WHAT YOU HAVE:
+- AI-powered trading bot (Claude API)
+- AI tutor with voice lessons and quizzes
+- Voice-controlled automation
+- Freemium monetization ready
+- Stripe payment integration
+
+FILES:
+- START.html ← OPEN THIS FIRST (has all instructions)
+- rdcm-unified-platform.html ← Main app (5-in-1 dashboard)
+- README.md ← Full documentation
+- DEPLOYMENT.md ← Technical details
+
+================================================================================
+3 STEPS TO LAUNCH
+================================================================================
+
+1. GET API KEY (1 minute)
+   → console.anthropic.com
+   → Sign up
+   → Copy API key (sk-ant-...)
+
+2. TEST LOCALLY (30 seconds)
+   → Open rdcm-unified-platform.html in browser
+   → Settings tab
+   → Paste API key
+   → Try any feature
+
+3. DEPLOY TO NETLIFY FREE (5 minutes)
+   → Create GitHub repo
+   → Push your files to GitHub
+   → Connect GitHub to Netlify
+   → Netlify auto-deploys
+   → Get live URL
+
+================================================================================
+DEPLOYMENT COMMANDS
+================================================================================
+
+# First time setup:
+cd /your/folder
+git init
+git add .
+git commit -m "RDCM Platform"
+
+# Then create repo on GitHub and run:
+git remote add origin https://github.com/YOUR_USERNAME/rdcm-platform.git
+git branch -M main
+git push -u origin main
+
+# Then go to netlify.com → Sign in with GitHub → New site from Git → Done!
+
+================================================================================
+NETLIFY FREE TIER:
+- Unlimited sites
+- Unlimited bandwidth (100GB/month)
+- Auto-deploy on every push
+- HTTPS included
+- No credit card needed
+================================================================================
+
+QUESTIONS? Open README.md or DEPLOYMENT.md
+
+NEXT: Open START.html in your browser →→→

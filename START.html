@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RDCM - Start Here</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+      color: #fff;
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 48px;
+    }
+    p {
+      text-align: center;
+      color: #aaa;
+      margin-bottom: 40px;
+    }
+    .card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 25px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+    }
+    .card h2 {
+      color: #667eea;
+      margin-bottom: 15px;
+      font-size: 20px;
+    }
+    .card ol {
+      margin-left: 20px;
+      line-height: 1.8;
+    }
+    .card li {
+      margin-bottom: 8px;
+    }
+    code {
+      background: rgba(0,0,0,0.3);
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: monospace;
+      color: #ffd700;
+    }
+    button {
+      display: inline-block;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      margin: 10px 5px;
+    }
+    button:hover {
+      transform: scale(1.05);
+    }
+    .center {
+      text-align: center;
+    }
+    .features {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin: 30px 0;
+    }
+    .feature {
+      padding: 15px;
+      background: rgba(102,126,234,0.1);
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    @media (max-width: 600px) {
+      .features { grid-template-columns: 1fr; }
+      h1 { font-size: 36px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🚀 RDCM</h1>
+    <p>AI Trading + Tutoring + Voice Bots - All in One</p>
+
+    <div class="features">
+      <div class="feature">💰 AI Trading - Claude-powered decisions</div>
+      <div class="feature">📚 AI Tutor - Lessons + voice narration</div>
+      <div class="feature">🎙️ Voice Bot - Control via speech</div>
+      <div class="feature">💳 Monetization - Freemium ready</div>
+    </div>
+
+    <div class="card">
+      <h2>Step 1: Get API Key (1 min)</h2>
+      <ol>
+        <li>Go to <a href="https://console.anthropic.com" style="color:#667eea" target="_blank">console.anthropic.com</a></li>
+        <li>Sign up free</li>
+        <li>Copy your API key (starts with <code>sk-ant-</code>)</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <h2>Step 2: Test It (30 sec)</h2>
+      <ol>
+        <li>Open <code>rdcm-unified-platform.html</code> in your browser</li>
+        <li>Go to Settings tab</li>
+        <li>Paste your API key</li>
+        <li>Click "Launch Platform"</li>
+        <li>Try the Tutor, Trading, or Voice tabs</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <h2>Step 3: Deploy (5 min)</h2>
+      <ol>
+        <li><a href="https://github.com/new" style="color:#667eea" target="_blank">Create GitHub repo</a> - name it <code>rdcm-platform</code></li>
+        <li>Push your files:
+          <pre style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 5px; overflow-x: auto;">git init
+git add .
+git commit -m "RDCM Platform"
+git remote add origin [YOUR_REPO_URL]
+git branch -M main
+git push -u origin main</pre>
+        </li>
+        <li><a href="https://netlify.com" style="color:#667eea" target="_blank">Go to Netlify.com</a></li>
+        <li>Sign up with GitHub</li>
+        <li>Click "New site from Git"</li>
+        <li>Select your repo → Deploy</li>
+        <li>Get your live URL! 🎉</li>
+      </ol>
+    </div>
+
+    <div class="card" style="background: rgba(102,126,234,0.1); border-color: #667eea;">
+      <h2>📊 What You Have</h2>
+      <p><strong>5-in-1 Platform:</strong></p>
+      <ul style="margin-left: 20px; line-height: 1.8;">
+        <li>🧠 <strong>AI Brain</strong> - Autonomous trading bot</li>
+        <li>📚 <strong>AI Tutor</strong> - Dynamic lessons with voice</li>
+        <li>🎙️ <strong>Voice Control</strong> - Command bots by speaking</li>
+        <li>📊 <strong>Dashboard</strong> - Real-time metrics</li>
+        <li>💳 <strong>Stripe Ready</strong> - Upgrade to premium tiers</li>
+      </ul>
+    </div>
+
+    <div class="card" style="background: rgba(100,200,100,0.1); border-color: #64c864;">
+      <h2>✅ Free Tier Included</h2>
+      <ul style="margin-left: 20px; line-height: 1.8;">
+        <li>Netlify hosting (unlimited sites, auto-deploy)</li>
+        <li>Claude API (pay-as-you-go, $5+ free trial)</li>
+        <li>HTTPS + custom domain support</li>
+        <li>Handles 1000+ daily users</li>
+      </ul>
+    </div>
+
+    <div class="center" style="margin-top: 40px;">
+      <button onclick="window.location.href='rdcm-unified-platform.html'">Launch Platform</button>
+      <button onclick="alert('Files in folder:\n- rdcm-unified-platform.html (main app)\n- index.html (alternate landing)\n- README.md (full docs)\n- DEPLOYMENT.md (details)\n\nJust deploy all files to Netlify!')">See Files</button>
+    </div>
+
+    <p style="margin-top: 40px; color: #666; font-size: 12px; text-align: center;">
+      Version 1.0 | Powered by Claude API | rdcmnation@gmail.com
+    </p>
+  </div>
+</body>
+</html>
